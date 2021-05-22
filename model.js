@@ -1,10 +1,12 @@
+//The Connect Four View 
 class ConnectFour {
     constructor (boardSide) {
-        this.boardSide = boardSide;
-        this.model = new ConnectModel(boardSize);
-        this.board = this.createBoard();
+        this.boardSide = boardSide; //The printed board is X by X size, where X is the initial boardSide given by the user.
+        this.model = new ConnectModel(boardSize); //The model is initialized here.
+        this.board = this.createBoard(); //The board is initialized here.
     }
 
+    //This method takes in data from the Model and prints it onto the browser. 
     createBoard = () => {
         let boardDiv = document.getElementsByClassName("board")[0];
         let board = new Array(this.boardSide);
@@ -24,6 +26,7 @@ class ConnectFour {
         return board;
     }
 
+    //This method makes the user's move in the model and updates the display board based on the updated model data.
     handleUserMove = (i, j) => {
         let data = this.model.playerMove(i, j);
         if(!data) return;
@@ -31,6 +34,7 @@ class ConnectFour {
         this.handleGameEnd(data);
     }
 
+    //This method updates the board with the Model's data.
     updateBoard = (data) => {
         for (let i = 0; i < this.boardSide; i++) {
             for (let j = 0; j < this.boardSide; j++) {
@@ -39,6 +43,7 @@ class ConnectFour {
         }
     }
 
+    //This method handles the 'won' and 'draw' conditions.
     handleGameEnd = (data) => {
         if (data.state === "won") {
             return window.alert(`${data.player} won! Refresh to play again.`)
@@ -48,14 +53,16 @@ class ConnectFour {
     }
 };
 
+//This is the Connect Four model
 class ConnectModel {
     constructor(boardSize) {
-        this.boardSize = boardSize;
-        this.player = "X";
-        this.board = this.buildBoard();
+        this.boardSize = boardSize; //The model board is X by X size, where X is the initial boardSide given by the user.
+        this.player = "X"; //This variable keeps track of the player.
+        this.board = this.buildBoard(); //This variable accounts for the initial board state.
         this.state = "ongoing" // win, draw;
     }
 
+    //This method builds the model-side board (in a 2D array)
     buildBoard = () => {
         const board = new Array(this.boardSize);
         for (let i = 0; i < this.boardSize; i++) {
@@ -67,6 +74,8 @@ class ConnectModel {
         return board
     }
 
+    //This method takes in the user's move, checks if the move is valid, 
+    //updates the board state if so, changes the active player if so, and returns that data to the display.
     playerMove = (x, y) => {
         if (!this.isPositionValid(x, y)) return null;
         if (this.state !== "ongoing") return null;
@@ -80,6 +89,7 @@ class ConnectModel {
         }
     }
 
+    //This method updates the game state if a 'won' or 'draw' condition is hit. 
     updateState = (player) => {
         if (this.isDraw()) {
             this.state = "draw";
@@ -88,8 +98,10 @@ class ConnectModel {
         }
     }
 
+    //This method checks whether the given coordinate pair is within bounds.
     isWithinBounds = (x, y) => x >= 0 && y >= 0 && x < this.boardSize && y < this.boardSize;
 
+    //This method changes the active player.
     changePlayer = () => {
         if (this.player === "X") {
             this.player = "O";
@@ -98,8 +110,10 @@ class ConnectModel {
         }
     }
 
+    //This method checks if a position is valid (if a cell is already occupied, it's invalid).
     isPositionValid = (x, y) => this.board[x][y] === " ";
 
+    //This method checks the draw condition (if all cells are occupied and no winner has been declared).
     isDraw = () => {
         for (let i = 0; i < this.boardSize; i++) {
             for(let j = 0; j < this.boardSize; j++) {
@@ -109,6 +123,7 @@ class ConnectModel {
         return true;
     }
 
+    //This method checks for all 4 win condition variants and updates the state if a win was hit.
     isWinner = (player) => {
         let connectFourCheck = 0;
         //check horizontal win
@@ -190,6 +205,5 @@ class ConnectModel {
 }
 
 const boardSize = 5;
-
 
 let game = new ConnectFour(boardSize);
